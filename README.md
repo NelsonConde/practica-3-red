@@ -26,6 +26,10 @@
 
 **Evidencia 2.** Resultado completo de `terraform plan` sin cambios y de `terraform output` con los dos valores.
 
+![Plan de Terraform sin cambios](docs/evidencias/fase-02-variables/01-terraform-plan.png)
+
+![Nombre de la red e identificador de la subred](docs/evidencias/fase-02-variables/02-terraform-output.png)
+
 ### Fase 3. La aplicación
 
 **Evidencia 3.** Instancia conectada a la subred propia, con su dirección IP interna.
@@ -56,6 +60,13 @@ gcloud compute networks subnets list
 ```
 
 ### Fase 2. Variables y salidas
+
+```bash
+terraform plan
+terraform apply
+terraform plan
+terraform output
+```
 
 ### Fase 3. La aplicación
 
