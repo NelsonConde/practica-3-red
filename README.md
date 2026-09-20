@@ -8,6 +8,34 @@
 
 ## 2. Diagrama de la infraestructura
 
+```mermaid
+flowchart TB
+    Usuario["Usuario en internet"]
+    IAP["IAP: administración mediante SSH"]
+    Internet["Internet"]
+
+    subgraph VPC["VPC: practica-3-vpc"]
+        subgraph Publica["Subred de aplicación: 10.10.1.0/24"]
+            APP["practica-3-app<br/>IP interna: 10.10.1.2<br/>IP pública asignada por Google Cloud"]
+        end
+
+        subgraph Privada["Subred de datos: 10.10.2.0/24"]
+            DATOS["practica-3-datos<br/>IP interna: 10.10.2.2<br/>Sin IP pública"]
+        end
+
+        ROUTER["Cloud Router"]
+        NAT["Cloud NAT"]
+    end
+
+    Usuario -->|"HTTP, puerto 80"| APP
+    APP -->|"HTTP interno, puerto 8080"| DATOS
+    IAP -.->|"SSH, puerto 22"| APP
+    IAP -.->|"SSH, puerto 22"| DATOS
+    DATOS -->|"Conexiones de salida"| NAT
+    ROUTER --- NAT
+    NAT --> Internet
+```
+
 ## 3. Evidencias
 
 ### Evidencia 0. Preparación del entorno
@@ -68,7 +96,19 @@ Finalmente, se comprobó que la aplicación volvió a funcionar. La máquina rec
 
 ### Fase 6. La máquina que nadie puede alcanzar
 
-**Evidencia 6.** Diagrama de la red final, aplicación mostrando el dato de la máquina privada y pruebas de acceso externo e interno.
+**Evidencia 6.** Se creó una segunda subred con una máquina sin IP pública. La aplicación consulta el servicio de datos mediante la dirección interna de esa máquina y muestra la información recibida.
+
+La siguiente captura muestra la aplicación funcionando desde internet con el dato obtenido de la máquina privada.
+
+![Aplicación mostrando el dato del servidor privado](docs/evidencias/fase-06-reto/01-aplicacion-con-datos-privados.png)
+
+Desde la máquina de aplicación se consultó el servicio privado utilizando la dirección interna `10.10.2.2` y el puerto `8080`. El servicio respondió correctamente.
+
+![Consulta interna al servidor de datos](docs/evidencias/fase-06-reto/02-consulta-interna.png)
+
+Finalmente, se comprobó que la máquina de datos no tiene IP pública y que el intento de conexión directa desde Cloud Shell no obtuvo respuesta.
+
+![Comprobación del aislamiento de la máquina privada](docs/evidencias/fase-06-reto/03-intento-externo.png)
 
 ## 4. Comandos ejecutados
 
@@ -127,6 +167,30 @@ curl http://$(terraform output -raw ip_publica)
 ```
 
 ### Fase 6. La máquina que nadie puede alcanzar
+
+```bash
+gcloud config set project project-dbb36c67-9183-4c5d-aff
+gcloud config get-value project
+gcloud compute instances list
+gcloud compute networks list
+
+terraform init -input=false
+terraform validate
+terraform plan
+terraform apply
+terraform output
+
+gcloud compute instances describe practica-3-datos --zone=us-central1-a --format="get(networkInterfaces[0].networkIP)"
+
+curl -i --max-time 15 http://35.184.22.114/
+
+gcloud compute ssh practica-3-app --zone=us-central1-a --tunnel-through-iap
+curl http://10.10.2.2:8080/datos.json
+exit
+
+gcloud compute instances list
+curl --connect-timeout 5 http://10.10.2.2:8080/datos.json
+```
 
 ## 5. Decisiones de diseño
 
