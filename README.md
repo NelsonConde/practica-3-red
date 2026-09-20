@@ -40,6 +40,12 @@
 
 **Evidencia 4.** Aplicación abierta con la IP visible, reglas de cortafuegos y sesión SSH mediante IAP.
 
+![Aplicación accesible desde internet](docs/evidencias/fase-04-firewall/01-aplicacion-publica.png)
+
+![Reglas de cortafuegos de la VPC](docs/evidencias/fase-04-firewall/02-reglas-firewall.png)
+
+![Conexión SSH mediante IAP](docs/evidencias/fase-04-firewall/03-ssh-iap.png)
+
 ### Fase 5. Reproducir desde cero
 
 **Evidencia 5.** Destrucción de los recursos, comprobación de los listados vacíos y reconstrucción de la infraestructura con la aplicación funcionando.
@@ -79,6 +85,17 @@ terraform output
 ```
 
 ### Fase 4. Las puertas
+
+```bash
+git pull origin main
+terraform plan
+terraform apply
+terraform output -raw ip_publica
+curl http://34.28.223.243
+gcloud compute ssh practica-3-app --zone=us-central1-a --tunnel-through-iap
+hostname
+exit
+```
 
 ### Fase 5. Reproducir desde cero
 
