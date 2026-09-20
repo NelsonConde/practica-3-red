@@ -18,6 +18,10 @@
 
 **Evidencia 1.** Lista de subredes con nombre, región y rango, y resultado del `terraform apply` con los dos recursos creados.
 
+![Creación de la red y la subred con Terraform](docs/evidencias/fase-01-red/01-terraform-apply.png)
+
+![Lista de subredes](docs/evidencias/fase-01-red/02-subred.png)
+
 ### Fase 2. Variables y salidas
 
 **Evidencia 2.** Resultado completo de `terraform plan` sin cambios y de `terraform output` con los dos valores.
@@ -43,6 +47,13 @@
 ### Preparación del entorno
 
 ### Fase 1. La red y su subred
+
+```bash
+terraform init
+terraform plan
+terraform apply
+gcloud compute networks subnets list
+```
 
 ### Fase 2. Variables y salidas
 
