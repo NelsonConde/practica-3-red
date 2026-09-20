@@ -194,18 +194,37 @@ curl --connect-timeout 5 http://10.10.2.2:8080/datos.json
 
 ## 5. Decisiones de diseño
 
-**1. Servicio y puerto de la máquina de datos:**
+**1. Servicio y puerto:** Elegí un servicio HTTP en el puerto 8080 porque solo necesitaba que la máquina privada entregara un dato a la aplicación. Usar una base de datos habría añadido complejidad innecesaria.
 
-**2. Organización de los archivos de Terraform:**
+**2. Organización de archivos:** Elegí mantener los archivos anteriores y crear otros para los recursos de la fase 6. Así puedo identificar los nuevos componentes sin modificar la organización de lo que ya funcionaba.
 
-**3. Administración de la máquina sin IP pública:**
+**3. Administración de la máquina privada:** Elegí SSH mediante IAP porque me permite administrar la máquina sin asignarle una IP pública ni exponer SSH directamente a internet.
 
-**4. Direccionamiento de las dos subredes:**
+**4. Direccionamiento:** Elegí 10.10.1.0/24 para la aplicación y 10.10.2.0/24 para los datos porque son rangos distintos que no se superponen. Si conectara esta VPC con otra red, tendría que comprobar que sus rangos tampoco coincidan.
 
 ## 6. Preguntas de análisis
 
 ### 6.1. Si le quitas la etiqueta de red a la máquina de aplicación y aplicas, ¿qué deja de funcionar exactamente, y por qué la regla de cortafuegos sigue existiendo?
 
+Si quito la etiqueta `servidor-web` de la máquina de aplicación, dejaría de poder acceder a la página desde internet, entrar por SSH mediante IAP y consultar el servicio de la máquina privada. Esto ocurre porque las reglas de cortafuegos utilizan esa etiqueta para identificar a qué máquinas se aplican y, en el caso de la comunicación interna, cuáles pueden iniciar la conexión. Las reglas seguirían existiendo porque Terraform las administra como recursos independientes de la máquina.
+
 ### 6.2. ¿Por qué el plan de la fase 2 no propuso ningún cambio, si el código era distinto? ¿Qué habrías tenido que cambiar para que sí propusiera recrear un recurso?
 
+En la fase 2 organicé la configuración usando variables y salidas, pero mantuve los mismos recursos y valores. Por eso, Terraform no encontró diferencias en la infraestructura y el plan no propuso cambios. Si hubiera cambiado el nombre de la VPC, Terraform habría tenido que reemplazarla, porque ese atributo no se puede modificar directamente en el recurso existente.
+
 ### 6.3. Con la red completa encendida, ¿cuánto costaría un mes? Desglosa por recurso y señala cuál es el que más sorprende.
+
+Si mantuviera toda la infraestructura encendida durante un mes de 720 horas, el costo estimado sería de unos USD 21, distribuidos así:
+
+| Recurso | Costo mensual aproximado |
+|---|---:|
+| Dos máquinas e2-micro | USD 12,06 |
+| Dos discos pd-standard de 10 GB | USD 0,80 |
+| IP pública de la máquina de aplicación | USD 3,60 |
+| Cloud NAT para una máquina privada | USD 1,01 |
+| Dirección IP pública utilizada por Cloud NAT | USD 3,60 |
+| **Total estimado** | **USD 21,07** |
+
+Lo que más me sorprendió fue que Cloud NAT puede generar costos mientras está configurado, aunque la máquina privada no esté enviando datos. Por eso, al terminar las pruebas destruyo la infraestructura para evitar gastos innecesarios.
+
+El cálculo es aproximado y no incluye tráfico variable, impuestos ni posibles beneficios gratuitos.
