@@ -50,6 +50,22 @@
 
 **Evidencia 5.** Destrucción de los recursos, comprobación de los listados vacíos y reconstrucción de la infraestructura con la aplicación funcionando.
 
+Se eliminaron los cinco recursos de la práctica mediante Terraform.
+
+![Destrucción de los cinco recursos](docs/evidencias/fase-05-reconstruccion/01-terraform-destroy.png)
+
+Después de la destrucción, se comprobó que no quedaban máquinas virtuales y que la red `practica-3-vpc` había sido eliminada. La red `default` permaneció en el proyecto.
+
+![Verificación de los recursos eliminados](docs/evidencias/fase-05-reconstruccion/02-verificacion-destroy.png)
+
+Se reconstruyó la infraestructura utilizando el mismo código de Terraform, con cinco recursos creados correctamente.
+
+![Reconstrucción de la infraestructura](docs/evidencias/fase-05-reconstruccion/03-terraform-apply.png)
+
+Finalmente, se comprobó que la aplicación volvió a funcionar. La máquina recibió una nueva IP pública: `34.41.201.178`, diferente de la anterior, `34.28.223.243`.
+
+![Aplicación funcionando después de la reconstrucción](docs/evidencias/fase-05-reconstruccion/04-aplicacion-reconstruida.png)
+
 ### Fase 6. La máquina que nadie puede alcanzar
 
 **Evidencia 6.** Diagrama de la red final, aplicación mostrando el dato de la máquina privada y pruebas de acceso externo e interno.
@@ -98,6 +114,17 @@ exit
 ```
 
 ### Fase 5. Reproducir desde cero
+
+```bash
+terraform output -raw ip_publica
+terraform plan -destroy
+terraform destroy
+gcloud compute instances list
+gcloud compute networks list
+terraform apply
+terraform output -raw ip_publica
+curl http://$(terraform output -raw ip_publica)
+```
 
 ### Fase 6. La máquina que nadie puede alcanzar
 
