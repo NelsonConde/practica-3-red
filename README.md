@@ -34,6 +34,8 @@
 
 **Evidencia 3.** Instancia conectada a la subred propia, con su dirección IP interna.
 
+![Instancia conectada a la subred propia e IP interna](docs/evidencias/fase-03-aplicacion/01-instancia-red.png)
+
 ### Fase 4. Las puertas
 
 **Evidencia 4.** Aplicación abierta con la IP visible, reglas de cortafuegos y sesión SSH mediante IAP.
@@ -69,6 +71,12 @@ terraform output
 ```
 
 ### Fase 3. La aplicación
+
+```bash
+terraform plan
+terraform apply
+terraform output
+```
 
 ### Fase 4. Las puertas
 
