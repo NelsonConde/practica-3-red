@@ -225,6 +225,4 @@ Si mantuviera toda la infraestructura encendida durante un mes de 720 horas, el 
 | Dirección IP pública utilizada por Cloud NAT | USD 3,60 |
 | **Total estimado** | **USD 21,07** |
 
-Lo que más me sorprendió fue que Cloud NAT puede generar costos mientras está configurado, aunque la máquina privada no esté enviando datos. Por eso, al terminar las pruebas destruyo la infraestructura para evitar gastos innecesarios.
-
-El cálculo es aproximado y no incluye tráfico variable, impuestos ni posibles beneficios gratuitos.
+Lo que no sabia que Cloud NAT puede generar costos mientras está configurado, aunque la máquina privada no esté enviando datos. Por eso, al terminar las pruebas destruyo la infraestructura para evitar gastos innecesarios.
